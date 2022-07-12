@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.27.2",
-    "ndjson": "^2.0.0",
-    "through2": "^4.0.2"
+    "axios": "^0.27.2"
   }
 }
