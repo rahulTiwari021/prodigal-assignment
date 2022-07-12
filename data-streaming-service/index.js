@@ -14,9 +14,7 @@ function createFileToStream() {
     writeStream.end();
 }
 
-function readFile(res) {
-    let count = 0;
-    let resourceId = crypto.randomUUID();
+function readFile(res, count, resourceId) {
     const readStream = fs.createReadStream('./test2.file');
     res.setHeader('Content-Type', 'application/json');
     readStream.on('data', chunk => {
@@ -41,6 +39,11 @@ function readFile(res) {
         res.write(JSON.stringify(obj));
         res.end();
     });
+
+    readStream.on('error', (error) => {
+        console.log(error);
+        res.end();
+    });
 }
 
 function main() {
@@ -48,7 +51,9 @@ function main() {
 }
 
 server.on('request', (req, res) => {
-    readFile(res);
+    let count = 0;
+    let resourceId = crypto.randomUUID();
+    readFile(res, count, resourceId);
 });
 
 //main();

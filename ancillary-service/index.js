@@ -7,19 +7,20 @@ server.on('request', async (request, response) => {
     const parsedData = [];
     const body = [];
     const dataStreamBaseUrl = 'http://localhost:3001/';
-    let count = 0;
+    //let count = 0;
     const request2 = http.get(dataStreamBaseUrl, res => {
         res.on('data', chunk => {
-            count++;
-            data += chunk;
+            //count++;
+            //data += chunk;
             const parsedChunk = Buffer.from(chunk).toString();
             parsedData.push(parsedChunk);
-            body.push(chunk);
+            //body.push(chunk);
         });
 
         res.on('end', () => {
             const postBody = processData(parsedData);
             triggerWebhook(postBody);
+            request.removeAllListeners();
             response.end();
         });
     });
