@@ -51,9 +51,12 @@ function main() {
 }
 
 server.on('request', (req, res) => {
+    const { method, url } = req;
+    if(url === '/') {
     let count = 0;
     let resourceId = crypto.randomUUID();
     readFile(res, count, resourceId);
+    }
 });
 
 //main();

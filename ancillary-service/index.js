@@ -1,37 +1,40 @@
 const http = require('http')
 const server = http.createServer();
 const axios = require('axios');
+var count = 0;
 
-server.on('request', async (request, response) => {
-    var data = "";
-    const parsedData = [];
-    const body = [];
-    const dataStreamBaseUrl = 'http://localhost:3001/';
-    //let count = 0;
-    const request2 = http.get(dataStreamBaseUrl, res => {
-        res.on('data', chunk => {
-            //count++;
-            //data += chunk;
-            const parsedChunk = Buffer.from(chunk).toString();
-            parsedData.push(parsedChunk);
-            //body.push(chunk);
+server.on('request', (request, response) => {
+    const { method, url } = request;
+    if(url === '/') {
+        console.log('count = ', count++);
+        console.log(`method = ${method} and url = ${url}`);
+        const parsedData = [];
+        const dataStreamBaseUrl = 'http://localhost:3001/';
+        const request2 = http.get(dataStreamBaseUrl, res => {
+            res.on('data', chunk => {
+                const parsedChunk = Buffer.from(chunk).toString();
+                parsedData.push(parsedChunk);
+            });
+    
+            res.on('end', () => {
+                const postBody = processData(parsedData);
+                triggerWebhook(postBody);
+                request.removeAllListeners();
+                response.end();
+            });
         });
-
-        res.on('end', () => {
-            const postBody = processData(parsedData);
-            triggerWebhook(postBody);
-            request.removeAllListeners();
-            response.end();
+    
+        request2.on('error', error => {
+            console.log('error = ', error);
+            res.end();
         });
-    });
-
-    request2.on('error', error => {
-        console.log('error = ', error);
-    });
-
-    request.on('error', error => {
-        console.log('error = ', error);
-    });
+    
+        request.on('error', error => {
+            console.log('error = ', error);
+            res.end();
+        });
+    }
+    
 });
 
 function triggerWebhook(postBody) {
@@ -67,7 +70,7 @@ function processData(parsedResults) {
             let arr = payload?.split(' ');
             if(arr) {
                 finalProcessedData = countWordLength(arr);
-                console.log(arr);
+                //console.log(arr);
             }
         }
     }
@@ -80,7 +83,7 @@ function processData(parsedResults) {
 function countWordLength(arr) {
     for(let i=0; i < arr.length; i++) {
         const wordLeng = arr[i].length;
-        console.log(`word = ${arr[i]} and wordLeng = ${wordLeng}`);
+        //console.log(`word = ${arr[i]} and wordLeng = ${wordLeng}`);
         arr.splice(i, 1, wordLeng.toString());
     }
     return arr;
