@@ -38,28 +38,6 @@ function triggerWebhook(postBody) {
     .post('http://localhost:5001/webhook', postBody);
 }
 
-function triggerWebhookOld(finalProcessedData) {
-    const options = {
-        host: '127.0.0.1',
-        port: 5001,
-        method: 'POST',
-        path: '/webhook',
-        body: JSON.stringify(finalProcessedData),
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': JSON.stringify(finalProcessedData).length,
-          }
-        };
-    console.log('Calling webhook');
-    const request = http.request(options, response => {
-        console.log(`statusCode: ${response.statusCode}`);
-    });
-      
-    request.on('error', error => {
-        console.error(error);
-    });
-}
-
 function convertStringToJson(item) {
     let str = item.replace(/[{}]/g, '');
     let arr = str.split(',');
